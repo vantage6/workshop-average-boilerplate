@@ -1,0 +1,38 @@
+{
+  "name": "workshop-average-boilerplate",
+  "image": "workshop-average-boilerplate",
+  "vantage6_version": "4.3",
+  "partitioning": "horizontal",
+  "functions": [
+    {
+      "name": "central_function",
+      "description": "Boilerplate code example after creating algorithm",
+      "type": "central",
+      "databases": [],
+      "arguments": [
+        {
+          "name": "column",
+          "type": "",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "partial_function",
+      "description": "",
+      "type": "federated",
+      "databases": [
+        {
+          "name": "Database 1"
+        }
+      ],
+      "arguments": [
+        {
+          "name": "column",
+          "type": "",
+          "description": ""
+        }
+      ]
+    }
+  ]
+}
