@@ -14,7 +14,7 @@ from vantage6.algorithm.client import AlgorithmClient
 
 
 @algorithm_client
-def central_function(client: AlgorithmClient, column, group_by) -> Any:
+def central_function(client: AlgorithmClient, column) -> Any:
     """Central part of the algorithm"""
     # TODO implement this function. Below is an example of a simple but typical
     # central function.
@@ -30,7 +30,6 @@ def central_function(client: AlgorithmClient, column, group_by) -> Any:
         "method": "partial_function",
         "kwargs": {
             "column": column,
-            "group_by": group_by,
         },
     }
 
@@ -49,20 +48,11 @@ def central_function(client: AlgorithmClient, column, group_by) -> Any:
     info("Results obtained!")
 
     info("Computing global average")
-    global_sums = {}
-    global_counts = {}
+    global_sum = 0
+    global_count = 0
     for output in results:
-        for key, value in output["sum"].items():
-            if key not in global_sums:
-                global_sums[key] = 0
-            global_sums[key] += value
-        for key, value in output["count"].items():
-            if key not in global_counts:
-                global_counts[key] = 0
-            global_counts[key] += value
+        global_sum += output["sum"]
+        global_count += output["count"]
 
-    results = {}
-    for key, value in global_sums.items():
-        results[key] = value / global_counts[key]
-
-    return results
+    # return the final results of the algorithm
+    return {"average": global_sum / global_count}

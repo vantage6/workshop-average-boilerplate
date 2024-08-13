@@ -50,7 +50,9 @@ org_ids = [organization["id"] for organization in organizations]
 central_task = client.task.create(
     input_={
         "method": "central_function",
-        "kwargs": {"column": "Age", "group_by": "Gender"},
+        "kwargs": {
+            "column": "Age",
+        },
     },
     organizations=[org_ids[0]],
 )
@@ -61,7 +63,9 @@ print(results)
 task = client.task.create(
     input_={
         "method": "partial_function",
-        "kwargs": {"column": "Age", "group_by": "Gender"},
+        "kwargs": {
+            "column": "Age",
+        },
     },
     organizations=org_ids,
 )

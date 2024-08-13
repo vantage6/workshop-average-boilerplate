@@ -15,21 +15,14 @@ from vantage6.algorithm.tools.decorators import data
 
 
 @data(1)
-def partial_function(df: pd.DataFrame, column, group_by) -> Any:
+def partial_function(df: pd.DataFrame, column) -> Any:
     """Decentral part of the algorithm"""
+    numbers = df[column]
 
-    grouped = df.groupby(group_by)
-    return {
-        "sum": grouped[column].sum().to_dict(),
-        "count": grouped[column].size().to_dict(),
-    }
+    # compute the sum, and count number of rows
+    info("Computing partials")
+    local_sum = float(numbers.sum())
+    local_count = len(numbers)
 
-    # numbers = df[column]
-
-    # # compute the sum, and count number of rows
-    # info("Computing partials")
-    # local_sum = float(numbers.sum())
-    # local_count = len(numbers)
-
-    # # return the values as a dict
-    # return {"sum": local_sum, "count": local_count}
+    # return the values as a dict
+    return {"sum": local_sum, "count": local_count}
