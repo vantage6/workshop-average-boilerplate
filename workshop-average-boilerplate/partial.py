@@ -6,6 +6,7 @@ The results in a return statement are sent to the vantage6 server (after
 encryption if that is enabled). From there, they are sent to the partial task
 or directly to the user (if they requested partial results).
 """
+
 import pandas as pd
 from typing import Any
 
@@ -14,18 +15,21 @@ from vantage6.algorithm.tools.decorators import data
 
 
 @data(1)
-def partial_function(
-    df1: pd.DataFrame, column
-) -> Any:
+def partial_function(df: pd.DataFrame, column, group_by) -> Any:
+    """Decentral part of the algorithm"""
 
-    """ Decentral part of the algorithm """
-    # TODO this is a simple example to show you how to return something simple.
-    # Replace it by your own code
-    info("Computing mean age by gender")
-    result = df1[["Gender", "Age"]].groupby("Gender").mean()
+    grouped = df.groupby(group_by)
+    return {
+        "sum": grouped[column].sum().to_dict(),
+        "count": grouped[column].size().to_dict(),
+    }
 
-    # Return results to the vantage6 server.
-    # TODO make sure no privacy sensitive data is shared
-    return result.to_dict()
+    # numbers = df[column]
 
-# TODO Feel free to add more partial functions here.
+    # # compute the sum, and count number of rows
+    # info("Computing partials")
+    # local_sum = float(numbers.sum())
+    # local_count = len(numbers)
+
+    # # return the values as a dict
+    # return {"sum": local_sum, "count": local_count}

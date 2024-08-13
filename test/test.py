@@ -11,6 +11,7 @@ installed. This can be done by running:
 
     pip install vantage6-algorithm-tools
 """
+
 from vantage6.algorithm.tools.mock_client import MockAlgorithmClient
 from pathlib import Path
 
@@ -21,19 +22,23 @@ current_path = Path(__file__).parent
 client = MockAlgorithmClient(
     datasets=[
         # Data for first organization
-        [{
-            "database": current_path / "test_data.csv",
-            "db_type": "csv",
-            "input_data": {}
-        }],
+        [
+            {
+                "database": current_path / "test_data.csv",
+                "db_type": "csv",
+                "input_data": {},
+            }
+        ],
         # Data for second organization
-        [{
-            "database": current_path / "test_data.csv",
-            "db_type": "csv",
-            "input_data": {}
-        }]
+        [
+            {
+                "database": current_path / "test_data.csv",
+                "db_type": "csv",
+                "input_data": {},
+            }
+        ],
     ],
-    module="workshop-average-boilerplate"
+    module="workshop-average-boilerplate",
 )
 
 # list mock organizations
@@ -44,12 +49,8 @@ org_ids = [organization["id"] for organization in organizations]
 # Run the central method on 1 node and get the results
 central_task = client.task.create(
     input_={
-        "method":"central_function",
-        "kwargs": {
-            # TODO add sensible values
-            "column": "some_value",
-
-        }
+        "method": "central_function",
+        "kwargs": {"column": "Age", "group_by": "Gender"},
     },
     organizations=[org_ids[0]],
 )
@@ -59,14 +60,10 @@ print(results)
 # Run the partial method for all organizations
 task = client.task.create(
     input_={
-        "method":"partial_function",
-        "kwargs": {
-            # TODO add sensible values
-            "column": "some_value",
-
-        }
+        "method": "partial_function",
+        "kwargs": {"column": "Age", "group_by": "Gender"},
     },
-    organizations=org_ids
+    organizations=org_ids,
 )
 print(task)
 

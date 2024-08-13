@@ -5,6 +5,7 @@ that the central method is executed on a node, just like any other method.
 The results in a return statement are sent to the vantage6 server (after
 encryption if that is enabled).
 """
+
 from typing import Any
 
 from vantage6.algorithm.tools.util import info, warn, error
@@ -13,11 +14,8 @@ from vantage6.algorithm.client import AlgorithmClient
 
 
 @algorithm_client
-def central_function(
-    client: AlgorithmClient, column
-) -> Any:
-
-    """ Central part of the algorithm """
+def central_function(client: AlgorithmClient, column, group_by) -> Any:
+    """Central part of the algorithm"""
     # TODO implement this function. Below is an example of a simple but typical
     # central function.
 
@@ -31,10 +29,9 @@ def central_function(
     input_ = {
         "method": "partial_function",
         "kwargs": {
-            # TODO add sensible values
-            "column": "some_value",
-
-        }
+            "column": column,
+            "group_by": group_by,
+        },
     }
 
     # create a subtask for all organizations in the collaboration.
@@ -43,20 +40,29 @@ def central_function(
         input_=input_,
         organizations=org_ids,
         name="My subtask",
-        description="This is a very important subtask"
+        description="This is a very important subtask",
     )
-
 
     # wait for node to return results of the subtask.
     info("Waiting for results")
     results = client.wait_for_results(task_id=task.get("id"))
     info("Results obtained!")
 
-    # TODO probably you want to aggregate or combine these results here.
-    # For instance:
-    # results = [sum(result) for result in results]
+    info("Computing global average")
+    global_sums = {}
+    global_counts = {}
+    for output in results:
+        for key, value in output["sum"].items():
+            if key not in global_sums:
+                global_sums[key] = 0
+            global_sums[key] += value
+        for key, value in output["count"].items():
+            if key not in global_counts:
+                global_counts[key] = 0
+            global_counts[key] += value
 
-    # return the final results of the algorithm
+    results = {}
+    for key, value in global_sums.items():
+        results[key] = value / global_counts[key]
+
     return results
-
-# TODO Feel free to add more central functions here.
